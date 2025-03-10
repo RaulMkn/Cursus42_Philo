@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:53:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/08 17:29:57 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/10 20:56:31 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,24 +24,51 @@ int	main(int argc, char *argv[])
 	data.time_to_die = ft_atoi(argv[2]);
 	data.time_to_eat = ft_atoi(argv[3]);
 	data.time_to_sleep = ft_atoi(argv[4]);
+	if (data.num_philos <= 0)
+		return (printf("Error: Invalid number of philosophers\n"), 1);
 	philos = malloc(data.num_philos * sizeof(t_philo));
 	if (!philos)
 		return (printf("Error: Memory allocation failed\n"), 1);
 	data.forks = malloc(data.num_philos * sizeof(pthread_mutex_t));
 	if (!data.forks)
 		return (printf("Error: Memory allocation failed\n"), free(philos), 1);
+	pthread_mutex_init(&data.print_lock, NULL);
 	i = 0;
-	while (i++ < data.num_philos)
+	while (i < data.num_philos)
 	{
 		pthread_mutex_init(&data.forks[i], NULL);
 		philos[i].id = i;
 		philos[i].left_fork = &data.forks[i];
 		philos[i].right_fork = &data.forks[(i + 1) % data.num_philos];
+		philos[i].data = &data; // ✅ Asignación correcta de `data`
 		i++;
 	}
+
 	i = 0;
-	while (i++ < data.num_philos)
+	while (i < data.num_philos)
+	{
+		if (pthread_create(&philos[i].thread, NULL, philo_routine,
+				&philos[i]) != 0)
+			return (printf("Error: Thread creation failed\n"), 1);
+		i++;
+	}
+
+	i = 0;
+	while (i < data.num_philos)
+	{
+		if (pthread_join(philos[i].thread, NULL) != 0)
+			return (printf("Error joining thread\n"), 1);
+		i++;
+	}
+
+	i = 0;
+	while (i < data.num_philos)
+	{
 		pthread_mutex_destroy(&data.forks[i]);
+		i++;
+	}
+	pthread_mutex_destroy(&data.print_lock);
+
 	free(data.forks);
 	free(philos);
 	return (0);
