@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:57:06 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/13 19:41:35 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/13 20:22:09 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,18 +47,9 @@ long long	get_timestamp_ms(void)
 	return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 }
 
-long	tiempo_transcurrido(struct timeval *inicio)
-{
-	struct timeval	ahora;
-
-	gettimeofday(&ahora, NULL);
-	return ((ahora.tv_sec - inicio->tv_sec) + (ahora.tv_usec - inicio->tv_usec)
-		/ 1000000);
-}
 void	*philo_routine(void *philos)
 {
 	t_philo			*philo;
-	long			tiempo_sin_comer;
 
 	philo = (t_philo *)philos;
 	if (!philo || !philo->left_fork || !philo->right_fork)
@@ -69,7 +60,6 @@ void	*philo_routine(void *philos)
 		pthread_mutex_lock(&philo->data->print_lock);
 		printf(CYAN "%lld %d is thinking\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
 		pthread_mutex_unlock(&philo->data->print_lock);
-		usleep(6000);
 		
 		// Toma de tenedores (evita deadlock)
 		if (philo->id % 2 == 0)
@@ -90,7 +80,7 @@ void	*philo_routine(void *philos)
 		pthread_mutex_lock(&philo->data->print_lock);
 		printf(GREEN "%lld %d is eating\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
 		pthread_mutex_unlock(&philo->data->print_lock);
-		gettimeofday(&philo->last_meal_time, NULL);
+		philo->last_meal_time = get_timestamp_ms();
 		usleep(philo->data->time_to_eat);
 		
 		// Soltar tenedores
@@ -103,15 +93,12 @@ void	*philo_routine(void *philos)
 		pthread_mutex_unlock(&philo->data->print_lock);
 		usleep(philo->data->time_to_sleep);
 		
-
-		tiempo_sin_comer = tiempo_transcurrido(&philo->last_meal_time);
-		if (tiempo_sin_comer >= philo->data->time_to_die)
+		if ((get_timestamp_ms() - philo->last_meal_time) >= philo->data->time_to_die)
 		{
 			pthread_mutex_lock(&philo->data->print_lock);
 			printf(RED "%lld %d died\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
-
 			pthread_mutex_unlock(&philo->data->print_lock);
-			exit(0);
+			return(0);
 		}
 	}
 	return (NULL);

@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 19:27:42 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/13 19:27:53 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/13 20:09:25 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ typedef struct s_philo
 {
 	int				id;
 	pthread_t		thread;
-	struct timeval last_meal_time; // Tiempo del último alimento
+	long long last_meal_time; // Tiempo del último alimento
 	int				meals_eaten;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;

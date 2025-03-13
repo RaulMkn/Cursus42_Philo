@@ -6,7 +6,7 @@
 #    By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/05 19:45:33 by rmakende          #+#    #+#              #
-#    Updated: 2025/03/08 17:34:05 by rmakende         ###   ########.fr        #
+#    Updated: 2025/03/13 20:01:02 by rmakende         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,27 +26,24 @@ RESET = \033[0m
 
 all: $(NAME)
 	@echo "(•_•)"
-	@sleep 1
+	@sleep 0.5
 	@echo "( •_•)>⌐■-■"
-	@sleep 1
+	@sleep 0.5
 	@echo "(⌐■_■)   ✅"
-	@sleep 1
+	@sleep 0.5
 	@echo "\(^_^)/$(GREEN) Compilación exitosa: $(NAME) está listo para ejecutarse 🚀$(RESET)"
 
 $(NAME): $(OBJS)
-	@echo "$(BLUE)🔧 Compilando y enlazando archivos...$(RESET)"
 	@$(CC) $(CFLAGS) -o $(NAME) $(OBJS)
 
 %.o: %.c
-	@echo "$(YELLOW)📄 Compilando $< ...$(RESET)"
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	@echo "$(RED)🗑️ Eliminando archivos objeto...$(RESET)"
+	@echo "(•_•) ⊃🗑️$(RED)  Eliminado exitosamente $(RESET)"
 	@rm -f $(OBJS)
 
 fclean: clean
-	@echo "$(RED)🚮 Eliminando $(NAME)...$(RESET)"
 	@rm -f $(NAME)
 
 re: fclean all
