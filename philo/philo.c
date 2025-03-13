@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:53:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/13 21:24:28 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/13 22:36:03 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int	main(int argc, char *argv[])
 {
 	t_data	data;
 	t_philo	*philos;
+	pthread_t monitor_thread;
 	int		i;
 
 	if (argc < 5 || argc > 6)
@@ -41,9 +42,14 @@ int	main(int argc, char *argv[])
 		philos[i].id = i;
 		philos[i].left_fork = &data.forks[i];
 		philos[i].right_fork = &data.forks[(i + 1) % data.num_philos];
+		philos->dead = 0;
 		philos[i].data = &data; // ✅ Asignación correcta de `data`
 		i++;
 	}
+	if (pthread_create(&monitor_thread, NULL, monitor_routine, philos) != 0) {
+        printf("Error: Monitor thread creation failed\n");
+        return 1;
+    }
 	i = 0;
 	while (i < data.num_philos)
 	{
@@ -59,6 +65,7 @@ int	main(int argc, char *argv[])
 			return (printf("Error joining thread\n"), 1);
 		i++;
 	}
+	pthread_join(monitor_thread, NULL);
 	i = 0;
 	while (i < data.num_philos)
 	{

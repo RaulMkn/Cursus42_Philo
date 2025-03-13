@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:57:06 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/13 22:04:04 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/13 22:30:19 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,38 @@ long long	get_timestamp_ms(void)
 	return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 }
 
+void	*monitor_routine(void *philos)
+{
+	t_philo *philo = (t_philo *)philos;
+	int i;
+	int temp;
+
+	i = 0;
+	temp = 1;
+	while (temp)
+	{
+		while (i < philo->data->num_philos)
+		{
+			pthread_mutex_lock(&philo[i].check_lock);
+
+			if (philo[i].dead == 1)
+			{
+				temp = 0;
+				pthread_mutex_unlock(&philo[i].check_lock);
+				return NULL;
+			}
+			
+			i++;
+		}
+		pthread_mutex_unlock(&philo[i].check_lock);
+		usleep(1000);
+		
+	}
+	return NULL;
+	
+	
+}
+
 void	*philo_routine(void *philos)
 {
 	t_philo			*philo;
@@ -54,7 +86,7 @@ void	*philo_routine(void *philos)
 	philo = (t_philo *)philos;
 	if (!philo || !philo->left_fork || !philo->right_fork)
 		return (NULL);
-	while (1)
+	while (!philo->dead)
 	{	 
 		// Pensando
 		pthread_mutex_lock(&philo->data->print_lock);
@@ -106,7 +138,10 @@ void	*philo_routine(void *philos)
 			pthread_mutex_lock(&philo->data->print_lock);
 			printf(RED "%lld %d died\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
 			pthread_mutex_unlock(&philo->data->print_lock);
-			exit(0);
+			pthread_mutex_lock(&philo->check_lock);
+            philo->dead = 1;
+            pthread_mutex_unlock(&philo->check_lock);
+			break;
 		}
 	}
 	return (NULL);

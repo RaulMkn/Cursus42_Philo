@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 19:27:42 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/13 20:09:25 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/13 22:27:30 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,10 @@ typedef struct s_philo
 {
 	int				id;
 	pthread_t		thread;
-	long long last_meal_time; // Tiempo del último alimento
+	long long		last_meal_time;
 	int				meals_eaten;
+	int				dead;
+	pthread_mutex_t	check_lock;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
 	t_data			*data;
@@ -56,5 +58,6 @@ typedef struct s_philo
 int					ft_atoi(const char *str);
 void				*philo_routine(void *philo);
 long long			get_timestamp_ms(void);
+void				*monitor_routine(void *philos);
 
 #endif
