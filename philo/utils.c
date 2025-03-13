@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:57:06 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/10 20:57:08 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/13 19:09:36 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,28 +69,28 @@ void	*philo_routine(void *philos)
 	{
 		// Pensando
 		pthread_mutex_lock(&philo->data->print_lock);
-		printf("%lld %d is thinking\n", timestamp, philo->id);
+		printf(CYAN "%lld %d is thinking\n" RESET, timestamp, philo->id);
 		pthread_mutex_unlock(&philo->data->print_lock);
 		usleep(6000);
 		
 		// Toma de tenedores (evita deadlock)
 		if (philo->id % 2 == 0)
 		{
-			printf("%lld %d has taken a fork\n", timestamp, philo->id);
+			printf(YELLOW "%lld %d has taken a fork\n" RESET, timestamp, philo->id);
 			pthread_mutex_lock(philo->right_fork);
-			printf("%lld %d has taken a fork\n", timestamp, philo->id);
+			printf(YELLOW "%lld %d has taken a fork\n" RESET, timestamp, philo->id);
 			pthread_mutex_lock(philo->left_fork);
 		}
 		else
 		{
-			printf("%lld %d has taken a fork\n", timestamp, philo->id);
+			printf(YELLOW "%lld %d has taken a fork\n" RESET, timestamp, philo->id);
 			pthread_mutex_lock(philo->left_fork);
-			printf("%lld %d has taken a fork\n", timestamp, philo->id);
+			printf(YELLOW "%lld %d has taken a fork\n" RESET, timestamp, philo->id);
 			pthread_mutex_lock(philo->right_fork);
 		}
 		// Comiendo
 		pthread_mutex_lock(&philo->data->print_lock);
-		printf("%lld %d is eating\n", timestamp, philo->id);
+		printf(GREEN "%lld %d is eating\n" RESET, timestamp, philo->id);
 		pthread_mutex_unlock(&philo->data->print_lock);
 		gettimeofday(&philo->last_meal_time, NULL);
 		usleep(philo->data->time_to_eat);
@@ -98,18 +98,19 @@ void	*philo_routine(void *philos)
 		// Soltar tenedores
 		pthread_mutex_unlock(philo->left_fork);
 		pthread_mutex_unlock(philo->right_fork);
-		pthread_mutex_lock(&philo->data->print_lock);
-		printf("%lld %d is sleeping\n", timestamp, philo->id);
-		pthread_mutex_unlock(&philo->data->print_lock);
 		
 		// Durmiendo
+		pthread_mutex_lock(&philo->data->print_lock);
+		printf(MAGENTA "%lld %d is sleeping\n"RESET, timestamp, philo->id);
+		pthread_mutex_unlock(&philo->data->print_lock);
 		usleep(philo->data->time_to_sleep);
+		
 
 		tiempo_sin_comer = tiempo_transcurrido(&philo->last_meal_time);
 		if (tiempo_sin_comer >= philo->data->time_to_die)
 		{
 			pthread_mutex_lock(&philo->data->print_lock);
-			printf("\033[31m%lld %d died\033[0m\n", timestamp, philo->id);
+			printf(RED "%lld %d died\n" RESET, timestamp, philo->id);
 
 			pthread_mutex_unlock(&philo->data->print_lock);
 			exit(0);
