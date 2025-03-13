@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:57:06 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/13 19:09:36 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/13 19:41:35 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,39 +58,37 @@ long	tiempo_transcurrido(struct timeval *inicio)
 void	*philo_routine(void *philos)
 {
 	t_philo			*philo;
-	long long int	timestamp;
 	long			tiempo_sin_comer;
 
 	philo = (t_philo *)philos;
-	timestamp = get_timestamp_ms();
 	if (!philo || !philo->left_fork || !philo->right_fork)
 		return (NULL);
 	while (1)
-	{
+	{	 
 		// Pensando
 		pthread_mutex_lock(&philo->data->print_lock);
-		printf(CYAN "%lld %d is thinking\n" RESET, timestamp, philo->id);
+		printf(CYAN "%lld %d is thinking\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
 		pthread_mutex_unlock(&philo->data->print_lock);
 		usleep(6000);
 		
 		// Toma de tenedores (evita deadlock)
 		if (philo->id % 2 == 0)
 		{
-			printf(YELLOW "%lld %d has taken a fork\n" RESET, timestamp, philo->id);
+			printf(YELLOW "%lld %d has taken a fork\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
 			pthread_mutex_lock(philo->right_fork);
-			printf(YELLOW "%lld %d has taken a fork\n" RESET, timestamp, philo->id);
+			printf(YELLOW "%lld %d has taken a fork\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
 			pthread_mutex_lock(philo->left_fork);
 		}
 		else
 		{
-			printf(YELLOW "%lld %d has taken a fork\n" RESET, timestamp, philo->id);
+			printf(YELLOW "%lld %d has taken a fork\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
 			pthread_mutex_lock(philo->left_fork);
-			printf(YELLOW "%lld %d has taken a fork\n" RESET, timestamp, philo->id);
+			printf(YELLOW "%lld %d has taken a fork\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
 			pthread_mutex_lock(philo->right_fork);
 		}
 		// Comiendo
 		pthread_mutex_lock(&philo->data->print_lock);
-		printf(GREEN "%lld %d is eating\n" RESET, timestamp, philo->id);
+		printf(GREEN "%lld %d is eating\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
 		pthread_mutex_unlock(&philo->data->print_lock);
 		gettimeofday(&philo->last_meal_time, NULL);
 		usleep(philo->data->time_to_eat);
@@ -101,7 +99,7 @@ void	*philo_routine(void *philos)
 		
 		// Durmiendo
 		pthread_mutex_lock(&philo->data->print_lock);
-		printf(MAGENTA "%lld %d is sleeping\n"RESET, timestamp, philo->id);
+		printf(MAGENTA "%lld %d is sleeping\n"RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
 		pthread_mutex_unlock(&philo->data->print_lock);
 		usleep(philo->data->time_to_sleep);
 		
@@ -110,7 +108,7 @@ void	*philo_routine(void *philos)
 		if (tiempo_sin_comer >= philo->data->time_to_die)
 		{
 			pthread_mutex_lock(&philo->data->print_lock);
-			printf(RED "%lld %d died\n" RESET, timestamp, philo->id);
+			printf(RED "%lld %d died\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
 
 			pthread_mutex_unlock(&philo->data->print_lock);
 			exit(0);

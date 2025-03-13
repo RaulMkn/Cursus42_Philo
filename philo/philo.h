@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 19:27:42 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/13 19:05:53 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/13 19:27:53 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ typedef struct s_data
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				must_eat_count;
+	long long		rutine_start;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print_lock;
 
@@ -54,5 +55,6 @@ typedef struct s_philo
 
 int					ft_atoi(const char *str);
 void				*philo_routine(void *philo);
+long long			get_timestamp_ms(void);
 
 #endif
