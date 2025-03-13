@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:57:06 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/13 21:23:45 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/13 22:04:04 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	*philo_routine(void *philos)
 
 		if (philo->data->num_philos == 1) {
 			printf(YELLOW "%lld %d has taken a fork\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
-			usleep(philo->data->time_to_die);
+			usleep(1000 * philo->data->time_to_die);
 			printf(RED "%lld %d died\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
 			return NULL;
 		}
@@ -88,8 +88,8 @@ void	*philo_routine(void *philos)
 		pthread_mutex_lock(&philo->data->print_lock);
 		printf(GREEN "%lld %d is eating\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
 		pthread_mutex_unlock(&philo->data->print_lock);
+		usleep(1000 * philo->data->time_to_eat);
 		philo->last_meal_time = get_timestamp_ms();
-		usleep(philo->data->time_to_eat);
 		
 		// Soltar tenedores
 		pthread_mutex_unlock(philo->left_fork);
@@ -99,14 +99,14 @@ void	*philo_routine(void *philos)
 		pthread_mutex_lock(&philo->data->print_lock);
 		printf(MAGENTA "%lld %d is sleeping\n"RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
 		pthread_mutex_unlock(&philo->data->print_lock);
-		usleep(philo->data->time_to_sleep);
+		usleep(1000 * philo->data->time_to_sleep);
 		
 		if ((get_timestamp_ms() - philo->last_meal_time) >= philo->data->time_to_die)
 		{
 			pthread_mutex_lock(&philo->data->print_lock);
 			printf(RED "%lld %d died\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
 			pthread_mutex_unlock(&philo->data->print_lock);
-			return(0);
+			exit(0);
 		}
 	}
 	return (NULL);
