@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:57:06 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/13 20:22:09 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/13 21:23:45 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,14 @@ void	*philo_routine(void *philos)
 		pthread_mutex_lock(&philo->data->print_lock);
 		printf(CYAN "%lld %d is thinking\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
 		pthread_mutex_unlock(&philo->data->print_lock);
+
+		if (philo->data->num_philos == 1) {
+			printf(YELLOW "%lld %d has taken a fork\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
+			usleep(philo->data->time_to_die);
+			printf(RED "%lld %d died\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
+			return NULL;
+		}
+		
 		
 		// Toma de tenedores (evita deadlock)
 		if (philo->id % 2 == 0)

@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:53:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/13 19:30:33 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/13 21:24:28 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ int	main(int argc, char *argv[])
 		philos[i].data = &data; // ✅ Asignación correcta de `data`
 		i++;
 	}
-
 	i = 0;
 	while (i < data.num_philos)
 	{
@@ -53,7 +52,6 @@ int	main(int argc, char *argv[])
 			return (printf("Error: Thread creation failed\n"), 1);
 		i++;
 	}
-
 	i = 0;
 	while (i < data.num_philos)
 	{
@@ -61,7 +59,6 @@ int	main(int argc, char *argv[])
 			return (printf("Error joining thread\n"), 1);
 		i++;
 	}
-
 	i = 0;
 	while (i < data.num_philos)
 	{
@@ -69,7 +66,6 @@ int	main(int argc, char *argv[])
 		i++;
 	}
 	pthread_mutex_destroy(&data.print_lock);
-
 	free(data.forks);
 	free(philos);
 	return (0);
