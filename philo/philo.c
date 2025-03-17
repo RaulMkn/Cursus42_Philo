@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:53:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/17 17:04:36 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/17 18:05:07 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ int	main(int argc, char *argv[])
 	data.time_to_eat = ft_atoi(argv[3]);
 	data.time_to_sleep = ft_atoi(argv[4]);
 	data.rutine_start = get_timestamp_ms();
+	data.over = 0;
+	pthread_mutex_init(&data.over_lock, NULL);
 	if (data.num_philos <= 0)
 		return (printf("Error: Invalid number of philosophers\n"), 1);
 	philos = malloc(data.num_philos * sizeof(t_philo));
@@ -75,6 +77,7 @@ int	main(int argc, char *argv[])
 		i++;
 	}
 	pthread_mutex_destroy(&data.print_lock);
+	pthread_mutex_destroy(&data.over_lock);
 	free(data.forks);
 	free(philos);
 	return (0);

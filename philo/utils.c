@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:57:06 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/17 17:06:44 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/17 19:15:06 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,8 @@ void	*monitor_routine(void *philos)
 {
     t_philo *philo = (t_philo *)philos;
     int i;
-    int temp;
 
-    temp = 1;
-    while (temp)
+    while (1)
     {
         i = 0;
         while (i < philo->data->num_philos)
@@ -63,11 +61,13 @@ void	*monitor_routine(void *philos)
 
             if (philo[i].dead == 1)
             {
-                temp = 0;
                 pthread_mutex_unlock(&philo[i].check_lock);
+				pthread_mutex_lock(&philo->data->over_lock);
+				philo->data->over = 1;
+				pthread_mutex_unlock(&philo->data->over_lock);
                 return NULL;
             }
-            
+
             pthread_mutex_unlock(&philo[i].check_lock);
             i++;
         }
@@ -76,6 +76,7 @@ void	*monitor_routine(void *philos)
     return NULL;
 }
 
+
 void	*philo_routine(void *philos)
 {
     t_philo			*philo;
@@ -83,19 +84,31 @@ void	*philo_routine(void *philos)
     philo = (t_philo *)philos;
     if (!philo || !philo->left_fork || !philo->right_fork)
         return (NULL);
-    while (!philo->dead)
+    while (1)
     {	 
+		pthread_mutex_lock(&philo->data->over_lock);
+		if (philo->data->over == 1)
+		{
+			pthread_mutex_unlock(&philo->data->over_lock);
+			break ;
+		}
+		pthread_mutex_unlock(&philo->data->over_lock);
+		
         // Pensando
         pthread_mutex_lock(&philo->data->print_lock);
         printf(CYAN "%lld %d is thinking\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
         pthread_mutex_unlock(&philo->data->print_lock);
 
-        if (philo->data->num_philos == 1) {
-            printf(YELLOW "%lld %d has taken a fork\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
-            usleep(1000 * philo->data->time_to_die);
-            printf(RED "%lld %d died\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
-            return NULL;
-        }
+		if (philo->data->num_philos == 1) {
+			pthread_mutex_lock(philo->left_fork);
+			printf(YELLOW "%lld %d has taken a fork\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
+			usleep(1000 * philo->data->time_to_die);
+			printf(RED "%lld %d died\n" RESET, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
+			pthread_mutex_unlock(philo->left_fork);
+			philo->dead = 1;
+			return NULL;
+		}
+		
         
         // Toma de tenedores (evita deadlock)
         if (philo->id % 2 == 0)

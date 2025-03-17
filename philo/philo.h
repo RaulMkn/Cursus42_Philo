@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 19:27:42 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/13 22:27:30 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/17 18:01:09 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ typedef struct s_data
 	int				time_to_sleep;
 	int				must_eat_count;
 	long long		rutine_start;
+	int				over;
+	pthread_mutex_t	over_lock;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print_lock;
 
