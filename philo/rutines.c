@@ -6,11 +6,58 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 19:29:14 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/17 19:32:28 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/17 19:44:58 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+void	philo_thinking(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->data->print_lock);
+	printf(CYAN "%lld %d is thinking\n" RESET, (get_timestamp_ms()
+			- philo->data->rutine_start), philo->id);
+	pthread_mutex_unlock(&philo->data->print_lock);
+}
+
+void	philo_eating(t_philo *philo)
+{
+	if (philo->id % 2 == 0)
+	{
+		pthread_mutex_lock(philo->right_fork);
+		printf(YELLOW "%lld %d has taken a fork\n" RESET, (get_timestamp_ms()
+				- philo->data->rutine_start), philo->id);
+		pthread_mutex_lock(philo->left_fork);
+		printf(YELLOW "%lld %d has taken a fork\n" RESET, (get_timestamp_ms()
+				- philo->data->rutine_start), philo->id);
+	}
+	else
+	{
+		pthread_mutex_lock(philo->left_fork);
+		printf(YELLOW "%lld %d has taken a fork\n" RESET, (get_timestamp_ms()
+				- philo->data->rutine_start), philo->id);
+		pthread_mutex_lock(philo->right_fork);
+		printf(YELLOW "%lld %d has taken a fork\n" RESET, (get_timestamp_ms()
+				- philo->data->rutine_start), philo->id);
+	}
+	pthread_mutex_lock(&philo->data->print_lock);
+	printf(GREEN "%lld %d is eating\n" RESET, (get_timestamp_ms()
+			- philo->data->rutine_start), philo->id);
+	pthread_mutex_unlock(&philo->data->print_lock);
+	usleep(1000 * philo->data->time_to_eat);
+	philo->last_meal_time = get_timestamp_ms();
+	pthread_mutex_unlock(philo->left_fork);
+	pthread_mutex_unlock(philo->right_fork);
+}
+
+void	philo_sleeping(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->data->print_lock);
+	printf(MAGENTA "%lld %d is sleeping\n" RESET, (get_timestamp_ms()
+			- philo->data->rutine_start), philo->id);
+	pthread_mutex_unlock(&philo->data->print_lock);
+	usleep(1000 * philo->data->time_to_sleep);
+}
 
 void	*monitor_routine(void *philos)
 {

@@ -6,27 +6,11 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:53:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/17 19:28:34 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/17 19:38:04 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-int	validate_arguments(int argc, char *argv[], t_data *data)
-{
-	if (argc < 5 || argc > 6)
-		return (printf("Error: Invalid number of arguments\n"), 1);
-	data->num_philos = ft_atoi(argv[1]);
-	data->time_to_die = ft_atoi(argv[2]);
-	data->time_to_eat = ft_atoi(argv[3]);
-	data->time_to_sleep = ft_atoi(argv[4]);
-	data->rutine_start = get_timestamp_ms();
-	data->over = 0;
-	pthread_mutex_init(&data->over_lock, NULL);
-	if (data->num_philos <= 0)
-		return (printf("Error: Invalid number of philosophers\n"), 1);
-	return (0);
-}
 
 int	initialize_philosophers(t_data *data, t_philo **philos)
 {
