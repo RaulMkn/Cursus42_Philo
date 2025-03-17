@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:57:06 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/17 20:02:19 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/17 20:44:09 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ long long	get_timestamp_ms(void)
 	gettimeofday(&tv, NULL);
 	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
-
 void	*monitor_routine(void *philos)
 {
 	t_philo	*philo;
@@ -60,6 +59,16 @@ void	*monitor_routine(void *philos)
 		{
 			pthread_mutex_lock(&philo[i].check_lock);
 			if (philo[i].dead == 1)
+			{
+				pthread_mutex_unlock(&philo[i].check_lock);
+				pthread_mutex_lock(&philo->data->over_lock);
+				philo->data->over = 1;
+				pthread_mutex_unlock(&philo->data->over_lock);
+				return (NULL);
+			}
+			pthread_mutex_unlock(&philo[i].check_lock);
+			pthread_mutex_lock(&philo[i].check_lock);
+			if (philo[i].meals_eaten >= philo->data->must_eat_count)
 			{
 				pthread_mutex_unlock(&philo[i].check_lock);
 				pthread_mutex_lock(&philo->data->over_lock);
@@ -83,6 +92,8 @@ int	validate_arguments(int argc, char *argv[], t_data *data)
 	data->time_to_die = ft_atoi(argv[2]);
 	data->time_to_eat = ft_atoi(argv[3]);
 	data->time_to_sleep = ft_atoi(argv[4]);
+	if (argv[5])
+		data->must_eat_count = ft_atoi(argv[5]);
 	data->rutine_start = get_timestamp_ms();
 	data->over = 0;
 	pthread_mutex_init(&data->over_lock, NULL);

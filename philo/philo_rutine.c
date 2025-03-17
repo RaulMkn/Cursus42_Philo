@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   rutines.c                                          :+:      :+:    :+:   */
+/*   philo_rutine.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 19:29:14 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/17 20:02:55 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/17 20:45:53 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,13 @@ static void	philo_eating(t_philo *philo)
 	pthread_mutex_unlock(&philo->data->print_lock);
 	usleep(1000 * philo->data->time_to_eat);
 	philo->last_meal_time = get_timestamp_ms();
-	pthread_mutex_unlock(philo->left_fork);
-	pthread_mutex_unlock(philo->right_fork);
+	philo->meals_eaten++;
 }
 
 static void	philo_sleeping(t_philo *philo)
 {
+	pthread_mutex_unlock(philo->left_fork);
+	pthread_mutex_unlock(philo->right_fork);
 	pthread_mutex_lock(&philo->data->print_lock);
 	printf(MAGENTA "%lld %d is sleeping\n" RESET, (get_timestamp_ms()
 			- philo->data->rutine_start), philo->id);

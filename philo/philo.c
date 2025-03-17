@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:53:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/17 20:05:32 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/17 20:45:14 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ static int	initialize_philosophers(t_data *data, t_philo **philos)
 	{
 		pthread_mutex_init(&data->forks[i], NULL);
 		(*philos)[i].id = i;
+		(*philos)[i].meals_eaten = 0;
 		(*philos)[i].left_fork = &data->forks[i];
 		(*philos)[i].right_fork = &data->forks[(i + 1) % data->num_philos];
 		(*philos)[i].dead = 0;
