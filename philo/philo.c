@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:53:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/13 22:36:03 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/17 17:04:36 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,9 @@ int	main(int argc, char *argv[])
 		philos[i].id = i;
 		philos[i].left_fork = &data.forks[i];
 		philos[i].right_fork = &data.forks[(i + 1) % data.num_philos];
-		philos->dead = 0;
-		philos[i].data = &data; // ✅ Asignación correcta de `data`
+		philos[i].dead = 0;
+		philos[i].data = &data;
+		pthread_mutex_init(&philos[i].check_lock, NULL);
 		i++;
 	}
 	if (pthread_create(&monitor_thread, NULL, monitor_routine, philos) != 0) {
@@ -70,6 +71,7 @@ int	main(int argc, char *argv[])
 	while (i < data.num_philos)
 	{
 		pthread_mutex_destroy(&data.forks[i]);
+		pthread_mutex_destroy(&philos[i].check_lock);
 		i++;
 	}
 	pthread_mutex_destroy(&data.print_lock);
