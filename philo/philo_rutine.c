@@ -6,13 +6,13 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 19:29:14 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/17 19:44:58 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/17 20:02:55 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	philo_thinking(t_philo *philo)
+static void	philo_thinking(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->data->print_lock);
 	printf(CYAN "%lld %d is thinking\n" RESET, (get_timestamp_ms()
@@ -20,7 +20,7 @@ void	philo_thinking(t_philo *philo)
 	pthread_mutex_unlock(&philo->data->print_lock);
 }
 
-void	philo_eating(t_philo *philo)
+static void	philo_eating(t_philo *philo)
 {
 	if (philo->id % 2 == 0)
 	{
@@ -50,7 +50,7 @@ void	philo_eating(t_philo *philo)
 	pthread_mutex_unlock(philo->right_fork);
 }
 
-void	philo_sleeping(t_philo *philo)
+static void	philo_sleeping(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->data->print_lock);
 	printf(MAGENTA "%lld %d is sleeping\n" RESET, (get_timestamp_ms()
@@ -59,32 +59,21 @@ void	philo_sleeping(t_philo *philo)
 	usleep(1000 * philo->data->time_to_sleep);
 }
 
-void	*monitor_routine(void *philos)
+static int	check_death(t_philo *philo)
 {
-	t_philo	*philo;
-	int		i;
-
-	philo = (t_philo *)philos;
-	while (1)
+	if ((get_timestamp_ms()
+			- philo->last_meal_time) >= philo->data->time_to_die)
 	{
-		i = 0;
-		while (i < philo->data->num_philos)
-		{
-			pthread_mutex_lock(&philo[i].check_lock);
-			if (philo[i].dead == 1)
-			{
-				pthread_mutex_unlock(&philo[i].check_lock);
-				pthread_mutex_lock(&philo->data->over_lock);
-				philo->data->over = 1;
-				pthread_mutex_unlock(&philo->data->over_lock);
-				return (NULL);
-			}
-			pthread_mutex_unlock(&philo[i].check_lock);
-			i++;
-		}
-		usleep(1);
+		pthread_mutex_lock(&philo->data->print_lock);
+		printf(RED "%lld %d died\n" RESET, (get_timestamp_ms()
+				- philo->data->rutine_start), philo->id);
+		pthread_mutex_unlock(&philo->data->print_lock);
+		pthread_mutex_lock(&philo->check_lock);
+		philo->dead = 1;
+		pthread_mutex_unlock(&philo->check_lock);
+		return (1);
 	}
-	return (NULL);
+	return (0);
 }
 
 void	*philo_routine(void *philos)

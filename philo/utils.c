@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:57:06 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/17 19:38:12 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/17 20:02:19 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,21 +47,32 @@ long long	get_timestamp_ms(void)
 	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
-int	check_death(t_philo *philo)
+void	*monitor_routine(void *philos)
 {
-	if ((get_timestamp_ms()
-			- philo->last_meal_time) >= philo->data->time_to_die)
+	t_philo	*philo;
+	int		i;
+
+	philo = (t_philo *)philos;
+	while (1)
 	{
-		pthread_mutex_lock(&philo->data->print_lock);
-		printf(RED "%lld %d died\n" RESET, (get_timestamp_ms()
-				- philo->data->rutine_start), philo->id);
-		pthread_mutex_unlock(&philo->data->print_lock);
-		pthread_mutex_lock(&philo->check_lock);
-		philo->dead = 1;
-		pthread_mutex_unlock(&philo->check_lock);
-		return (1);
+		i = 0;
+		while (i < philo->data->num_philos)
+		{
+			pthread_mutex_lock(&philo[i].check_lock);
+			if (philo[i].dead == 1)
+			{
+				pthread_mutex_unlock(&philo[i].check_lock);
+				pthread_mutex_lock(&philo->data->over_lock);
+				philo->data->over = 1;
+				pthread_mutex_unlock(&philo->data->over_lock);
+				return (NULL);
+			}
+			pthread_mutex_unlock(&philo[i].check_lock);
+			i++;
+		}
+		usleep(1);
 	}
-	return (0);
+	return (NULL);
 }
 
 int	validate_arguments(int argc, char *argv[], t_data *data)

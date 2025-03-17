@@ -6,13 +6,13 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:53:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/17 19:38:04 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/17 20:05:32 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	initialize_philosophers(t_data *data, t_philo **philos)
+static int	initialize_philosophers(t_data *data, t_philo **philos)
 {
 	int	i;
 
@@ -38,7 +38,7 @@ int	initialize_philosophers(t_data *data, t_philo **philos)
 	return (0);
 }
 
-int	create_philosophers_threads(t_data *data, t_philo *philos)
+static int	create_philosophers_threads(t_data *data, t_philo *philos)
 {
 	int			i;
 	pthread_t	monitor_thread;
@@ -60,7 +60,7 @@ int	create_philosophers_threads(t_data *data, t_philo *philos)
 	return (0);
 }
 
-int	join_philosophers_threads(t_philo *philos, t_data *data)
+static int	join_philosophers_threads(t_philo *philos, t_data *data)
 {
 	int	i;
 
@@ -74,7 +74,7 @@ int	join_philosophers_threads(t_philo *philos, t_data *data)
 	return (0);
 }
 
-void	cleanup(t_data *data, t_philo *philos)
+static void	cleanup(t_data *data, t_philo *philos)
 {
 	int	i;
 
