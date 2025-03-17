@@ -6,18 +6,30 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 19:29:14 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/17 20:45:53 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/17 21:48:04 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	philo_thinking(t_philo *philo)
+static void	philo_thinking(t_philo *philo, int *flag)
 {
 	pthread_mutex_lock(&philo->data->print_lock);
 	printf(CYAN "%lld %d is thinking\n" RESET, (get_timestamp_ms()
 			- philo->data->rutine_start), philo->id);
 	pthread_mutex_unlock(&philo->data->print_lock);
+	if (philo->data->num_philos == 1)
+	{
+		pthread_mutex_lock(philo->left_fork);
+		printf(YELLOW "%lld %d has taken a fork\n" RESET, (get_timestamp_ms()
+				- philo->data->rutine_start), philo->id);
+		usleep(1000 * philo->data->time_to_die);
+		printf(RED "%lld %d died\n" RESET, (get_timestamp_ms()
+				- philo->data->rutine_start), philo->id);
+		pthread_mutex_unlock(philo->left_fork);
+		philo->dead = 1;
+		*flag = 1;
+	}
 }
 
 static void	philo_eating(t_philo *philo)
@@ -80,6 +92,7 @@ static int	check_death(t_philo *philo)
 void	*philo_routine(void *philos)
 {
 	t_philo	*philo;
+	int		flag;
 
 	philo = (t_philo *)philos;
 	if (!philo || !philo->left_fork || !philo->right_fork)
@@ -88,24 +101,11 @@ void	*philo_routine(void *philos)
 	{
 		pthread_mutex_lock(&philo->data->over_lock);
 		if (philo->data->over == 1)
-		{
-			pthread_mutex_unlock(&philo->data->over_lock);
-			break ;
-		}
+			return (pthread_mutex_unlock(&philo->data->over_lock), NULL);
 		pthread_mutex_unlock(&philo->data->over_lock);
-		philo_thinking(philo);
-		if (philo->data->num_philos == 1)
-		{
-			pthread_mutex_lock(philo->left_fork);
-			printf(YELLOW "%lld %d has taken a fork\n" RESET,
-				(get_timestamp_ms() - philo->data->rutine_start), philo->id);
-			usleep(1000 * philo->data->time_to_die);
-			printf(RED "%lld %d died\n" RESET, (get_timestamp_ms()
-					- philo->data->rutine_start), philo->id);
-			pthread_mutex_unlock(philo->left_fork);
-			philo->dead = 1;
-			return (NULL);
-		}
+		philo_thinking(philo, &flag);
+		if (flag == 1)
+			break ;
 		philo_eating(philo);
 		philo_sleeping(philo);
 		if (check_death(philo))
