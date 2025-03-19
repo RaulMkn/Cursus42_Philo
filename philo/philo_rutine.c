@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 19:29:14 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/19 19:26:43 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/19 20:28:50 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ void	*philo_routine(void *philos)
 	t_philo	*philo;
 	int		flag;
 
+	flag = 0;
 	philo = (t_philo *)philos;
 	if (!philo || !philo->left_fork || !philo->right_fork)
 		return (NULL);
