@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 19:27:42 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/19 19:30:02 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/19 20:15:33 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ int					ft_atoi(const char *str);
 void				*philo_routine(void *philo);
 long long			get_timestamp_ms(void);
 void				*monitor_routine(void *philos);
-int					validate_arguments(int argc, char *argv[], t_data *data);
 long long			print_time(t_philo *philo);
 
 #endif

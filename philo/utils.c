@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:57:06 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/19 19:17:36 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/19 20:17:19 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ void	*monitor_routine(void *philos)
 				pthread_mutex_lock(&philo->data->over_lock);
 				philo->data->over = 1;
 				pthread_mutex_unlock(&philo->data->over_lock);
+				usleep(1000);
 				return (NULL);
 			}
 			pthread_mutex_unlock(&philo[i].check_lock);
@@ -79,22 +80,4 @@ void	*monitor_routine(void *philos)
 		usleep(1000);
 	}
 	return (NULL);
-}
-
-int	validate_arguments(int argc, char *argv[], t_data *data)
-{
-	if (argc < 5 || argc > 6)
-		return (printf("Error: Invalid number of arguments\n"), 1);
-	data->num_philos = ft_atoi(argv[1]);
-	data->time_to_die = ft_atoi(argv[2]);
-	data->time_to_eat = ft_atoi(argv[3]);
-	data->time_to_sleep = ft_atoi(argv[4]);
-	if (argv[5])
-		data->must_eat_count = ft_atoi(argv[5]);
-	data->rutine_start = get_timestamp_ms();
-	data->over = 0;
-	pthread_mutex_init(&data->over_lock, NULL);
-	if (data->num_philos <= 0)
-		return (printf("Error: Invalid number of philosophers\n"), 1);
-	return (0);
 }
