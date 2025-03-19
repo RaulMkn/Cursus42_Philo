@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 19:27:42 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/17 20:03:04 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/19 19:30:02 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,11 @@
 # include <sys/time.h>
 # include <unistd.h>
 
-# define RED "\033[31m"
-# define GREEN "\033[32m"
-# define YELLOW "\033[33m"
-# define BLUE "\033[34m"
-# define MAGENTA "\033[35m"
-# define CYAN "\033[36m"
-# define RESET "\033[0m"
+# define THINK "\033[34m%lld %d is thinking\n\033[0m"
+# define FORK "\033[33m%lld %d has taken a fork\n\033[0m"
+# define DEATH "\033[31m%lld %d died\n\033[0m"
+# define EAT "\033[32m%lld %d is eating\n\033[0m"
+# define SLEEP "\033[35m%lld %d is sleeping\n\033[0m"
 
 typedef struct s_data
 {
@@ -62,5 +60,6 @@ void				*philo_routine(void *philo);
 long long			get_timestamp_ms(void);
 void				*monitor_routine(void *philos);
 int					validate_arguments(int argc, char *argv[], t_data *data);
+long long			print_time(t_philo *philo);
 
 #endif

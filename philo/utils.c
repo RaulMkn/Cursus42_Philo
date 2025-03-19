@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:57:06 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/17 21:41:20 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/19 19:17:36 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,11 @@ long long	get_timestamp_ms(void)
 
 	gettimeofday(&tv, NULL);
 	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+}
+
+long long	print_time(t_philo *philo)
+{
+	return (get_timestamp_ms() - philo->data->rutine_start);
 }
 
 void	*monitor_routine(void *philos)
