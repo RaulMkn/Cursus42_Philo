@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 19:29:14 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/21 01:58:37 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/21 02:20:29 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ static int	check_death(t_philo *philo)
 	}
 	return (0);
 }
+
 void	*philo_routine(void *philos)
 {
 	t_philo	*philo;
@@ -104,19 +105,19 @@ void	*philo_routine(void *philos)
 	{
 		pthread_mutex_lock(&philo->data->over_lock);
 		if (philo->data->over == 1)
-			return(pthread_mutex_unlock(&philo->data->over_lock), NULL);
+			return (pthread_mutex_unlock(&philo->data->over_lock), NULL);
 		pthread_mutex_unlock(&philo->data->over_lock);
 		philo_thinking(philo, &flag);
 		if (flag == 1)
 			break ;
 		pthread_mutex_lock(&philo->data->over_lock);
 		if (philo->data->over == 1)
-			return(pthread_mutex_unlock(&philo->data->over_lock), NULL);
+			return (pthread_mutex_unlock(&philo->data->over_lock), NULL);
 		pthread_mutex_unlock(&philo->data->over_lock);
 		philo_eating(philo);
 		pthread_mutex_lock(&philo->data->over_lock);
 		if (philo->data->over == 1)
-			return(pthread_mutex_unlock(&philo->data->over_lock), NULL);
+			return (pthread_mutex_unlock(&philo->data->over_lock), NULL);
 		pthread_mutex_unlock(&philo->data->over_lock);
 		philo_sleeping(philo);
 		if (check_death(philo))

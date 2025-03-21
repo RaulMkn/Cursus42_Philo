@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:57:06 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/21 01:25:22 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/21 02:28:41 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,7 @@ void	*monitor_routine(void *philos)
 		while (i < philo->data->num_philos)
 		{
 			pthread_mutex_lock(&philo[i].check_lock);
-			if (philo[i].dead == 1
-				|| (philo[i].meals_eaten >= philo->data->must_eat_count))
+			if (philo[i].dead == 1)
 			{
 				pthread_mutex_unlock(&philo[i].check_lock);
 				pthread_mutex_lock(&philo->data->over_lock);
