@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 19:29:14 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/19 20:28:50 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/21 01:58:37 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,20 @@
 static void	philo_thinking(t_philo *philo, int *flag)
 {
 	pthread_mutex_lock(&philo->data->print_lock);
-	printf(THINK, (get_timestamp_ms() - philo->data->rutine_start), philo->id);
+	if (philo->data->over == 0)
+		printf(THINK, (get_timestamp_ms() - philo->data->rutine_start),
+			philo->id);
 	pthread_mutex_unlock(&philo->data->print_lock);
 	if (philo->data->num_philos == 1)
 	{
 		pthread_mutex_lock(philo->left_fork);
-		printf(FORK, (get_timestamp_ms() - philo->data->rutine_start),
-			philo->id);
+		if (philo->data->over == 0)
+			printf(FORK, (get_timestamp_ms() - philo->data->rutine_start),
+				philo->id);
 		usleep(1000 * philo->data->time_to_die);
-		printf(DEATH, (get_timestamp_ms() - philo->data->rutine_start),
-			philo->id);
+		if (philo->data->over == 0)
+			printf(DEATH, (get_timestamp_ms() - philo->data->rutine_start),
+				philo->id);
 		pthread_mutex_unlock(philo->left_fork);
 		philo->dead = 1;
 		*flag = 1;
@@ -36,21 +40,24 @@ static void	philo_eating(t_philo *philo)
 	if (philo->id % 2 == 0)
 	{
 		pthread_mutex_lock(philo->right_fork);
-		printf(FORK, (print_time(philo)), philo->id);
-		usleep(1000);
+		if (philo->data->over == 0)
+			printf(FORK, (print_time(philo)), philo->id);
 		pthread_mutex_lock(philo->left_fork);
-		printf(FORK, (print_time(philo)), philo->id);
+		if (philo->data->over == 0)
+			printf(FORK, (print_time(philo)), philo->id);
 	}
 	else
 	{
 		pthread_mutex_lock(philo->left_fork);
-		printf(FORK, (print_time(philo)), philo->id);
-		usleep(1000);
+		if (philo->data->over == 0)
+			printf(FORK, (print_time(philo)), philo->id);
 		pthread_mutex_lock(philo->right_fork);
-		printf(FORK, (print_time(philo)), philo->id);
+		if (philo->data->over == 0)
+			printf(FORK, (print_time(philo)), philo->id);
 	}
 	pthread_mutex_lock(&philo->data->print_lock);
-	printf(EAT, (print_time(philo)), philo->id);
+	if (philo->data->over == 0)
+		printf(EAT, (print_time(philo)), philo->id);
 	pthread_mutex_unlock(&philo->data->print_lock);
 	usleep(1000 * philo->data->time_to_eat);
 	philo->last_meal_time = get_timestamp_ms();
@@ -62,7 +69,8 @@ static void	philo_sleeping(t_philo *philo)
 	pthread_mutex_unlock(philo->left_fork);
 	pthread_mutex_unlock(philo->right_fork);
 	pthread_mutex_lock(&philo->data->print_lock);
-	printf(SLEEP, (print_time(philo)), philo->id);
+	if (philo->data->over == 0)
+		printf(SLEEP, (print_time(philo)), philo->id);
 	pthread_mutex_unlock(&philo->data->print_lock);
 	usleep(1000 * philo->data->time_to_sleep);
 }
@@ -73,7 +81,8 @@ static int	check_death(t_philo *philo)
 			- philo->last_meal_time) >= philo->data->time_to_die)
 	{
 		pthread_mutex_lock(&philo->data->print_lock);
-		printf(DEATH, (print_time(philo)), philo->id);
+		if (philo->data->over == 0)
+			printf(DEATH, (print_time(philo)), philo->id);
 		pthread_mutex_unlock(&philo->data->print_lock);
 		pthread_mutex_lock(&philo->check_lock);
 		philo->dead = 1;
@@ -82,7 +91,6 @@ static int	check_death(t_philo *philo)
 	}
 	return (0);
 }
-
 void	*philo_routine(void *philos)
 {
 	t_philo	*philo;
@@ -96,12 +104,20 @@ void	*philo_routine(void *philos)
 	{
 		pthread_mutex_lock(&philo->data->over_lock);
 		if (philo->data->over == 1)
-			return (pthread_mutex_unlock(&philo->data->over_lock), NULL);
+			return(pthread_mutex_unlock(&philo->data->over_lock), NULL);
 		pthread_mutex_unlock(&philo->data->over_lock);
 		philo_thinking(philo, &flag);
 		if (flag == 1)
 			break ;
+		pthread_mutex_lock(&philo->data->over_lock);
+		if (philo->data->over == 1)
+			return(pthread_mutex_unlock(&philo->data->over_lock), NULL);
+		pthread_mutex_unlock(&philo->data->over_lock);
 		philo_eating(philo);
+		pthread_mutex_lock(&philo->data->over_lock);
+		if (philo->data->over == 1)
+			return(pthread_mutex_unlock(&philo->data->over_lock), NULL);
+		pthread_mutex_unlock(&philo->data->over_lock);
 		philo_sleeping(philo);
 		if (check_death(philo))
 			break ;
