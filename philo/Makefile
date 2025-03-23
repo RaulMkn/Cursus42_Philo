@@ -6,13 +6,13 @@
 #    By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/05 19:45:33 by rmakende          #+#    #+#              #
-#    Updated: 2025/03/19 20:26:49 by rmakende         ###   ########.fr        #
+#    Updated: 2025/03/23 17:15:25 by rmakende         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g3 -pthread
+CFLAGS = -Wall -Wextra -Werror -g3 -pthread -fsanitize=address
 
 SRCS = philo.c utils.c philo_rutine.c
 OBJS = $(SRCS:.c=.o)

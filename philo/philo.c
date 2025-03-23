@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:53:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/19 20:15:15 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/23 17:17:02 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,11 @@ int	validate_arguments(int argc, char *argv[], t_data *data)
 	data->time_to_sleep = ft_atoi(argv[4]);
 	if (argv[5])
 		data->must_eat_count = ft_atoi(argv[5]);
+	else
+		data->must_eat_count = 2147483647;
 	data->rutine_start = get_timestamp_ms();
 	data->over = 0;
+	data->philo_full = 0;
 	pthread_mutex_init(&data->over_lock, NULL);
 	if (data->num_philos <= 0)
 		return (printf("Error: Invalid number of philosophers\n"), 1);
@@ -41,8 +44,9 @@ static int	initialize_philosophers(t_data *data, t_philo **philos)
 	if (!data->forks)
 		return (printf("Error: Memory allocation failed\n"), free(*philos), 1);
 	pthread_mutex_init(&data->print_lock, NULL);
+	pthread_mutex_init(&data->full_lock, NULL);
 	i = 0;
-	while (i < data->num_philos)
+	while (i++ < data->num_philos)
 	{
 		pthread_mutex_init(&data->forks[i], NULL);
 		(*philos)[i].id = i;
@@ -50,9 +54,9 @@ static int	initialize_philosophers(t_data *data, t_philo **philos)
 		(*philos)[i].left_fork = &data->forks[i];
 		(*philos)[i].right_fork = &data->forks[(i + 1) % data->num_philos];
 		(*philos)[i].dead = 0;
+		(*philos)[i].full = 0;
 		(*philos)[i].data = data;
 		pthread_mutex_init(&(*philos)[i].check_lock, NULL);
-		i++;
 	}
 	return (0);
 }

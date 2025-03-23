@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:57:06 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/21 02:28:41 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/21 13:34:11 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ void	*monitor_routine(void *philos)
 				pthread_mutex_lock(&philo->data->over_lock);
 				philo->data->over = 1;
 				pthread_mutex_unlock(&philo->data->over_lock);
+				usleep(1000);
 				return (NULL);
 			}
 			pthread_mutex_unlock(&philo[i].check_lock);
