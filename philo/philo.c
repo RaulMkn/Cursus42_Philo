@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:53:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/25 20:45:40 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/25 21:31:25 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,6 @@ static int	create_philosophers_threads(t_data *data, t_philo *philos)
 		if (pthread_create(&philos[i].thread, NULL, philo_routine,
 				&philos[i]) != 0)
 			return (printf("Error: Thread creation failed\n"), 1);
-		//	pthread_detach(philos[i].thread);
 		i++;
 	}
 	i = 0;

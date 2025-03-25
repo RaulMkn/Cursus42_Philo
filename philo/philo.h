@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 19:27:42 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/21 13:36:23 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/25 21:24:13 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,5 +63,10 @@ void				*philo_routine(void *philo);
 long long			get_timestamp_ms(void);
 void				*monitor_routine(void *philos);
 long long			print_time(t_philo *philo);
+int					check_death(t_philo *philo);
+void				update_philo_state(t_philo *philo);
+int					check_if_over(t_data *data);
+int					take_forks(t_philo *philo);
+void				philo_eats(t_philo *philo);
 
 #endif
