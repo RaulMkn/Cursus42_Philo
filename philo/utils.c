@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:57:06 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/21 13:34:11 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/25 20:52:31 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,29 +54,30 @@ long long	print_time(t_philo *philo)
 
 void	*monitor_routine(void *philos)
 {
-	t_philo	*philo;
-	int		i;
+	t_philo			*philo;
+	int				i;
 
 	philo = (t_philo *)philos;
 	while (1)
 	{
+		pthread_mutex_lock(&philo->data->over_lock);
+		if (philo->data->over == 1)
+			return (pthread_mutex_unlock(&philo->data->over_lock), NULL);
+		pthread_mutex_unlock(&philo->data->over_lock);
 		i = 0;
 		while (i < philo->data->num_philos)
 		{
 			pthread_mutex_lock(&philo[i].check_lock);
 			if (philo[i].dead == 1)
 			{
-				pthread_mutex_unlock(&philo[i].check_lock);
-				pthread_mutex_lock(&philo->data->over_lock);
-				philo->data->over = 1;
-				pthread_mutex_unlock(&philo->data->over_lock);
-				usleep(1000);
-				return (NULL);
+				return (pthread_mutex_unlock(&philo[i].check_lock),
+					pthread_mutex_lock(&philo->data->over_lock),
+					philo->data->over = 1,
+					pthread_mutex_unlock(&philo->data->over_lock), NULL);
 			}
 			pthread_mutex_unlock(&philo[i].check_lock);
 			i++;
 		}
-		usleep(100);
 	}
 	return (NULL);
 }

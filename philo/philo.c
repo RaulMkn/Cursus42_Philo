@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:53:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/23 17:17:02 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/25 20:45:40 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static int	initialize_philosophers(t_data *data, t_philo **philos)
 	pthread_mutex_init(&data->print_lock, NULL);
 	pthread_mutex_init(&data->full_lock, NULL);
 	i = 0;
-	while (i++ < data->num_philos)
+	while (i < data->num_philos)
 	{
 		pthread_mutex_init(&data->forks[i], NULL);
 		(*philos)[i].id = i;
@@ -57,6 +57,7 @@ static int	initialize_philosophers(t_data *data, t_philo **philos)
 		(*philos)[i].full = 0;
 		(*philos)[i].data = data;
 		pthread_mutex_init(&(*philos)[i].check_lock, NULL);
+		i++;
 	}
 	return (0);
 }
@@ -77,7 +78,13 @@ static int	create_philosophers_threads(t_data *data, t_philo *philos)
 		if (pthread_create(&philos[i].thread, NULL, philo_routine,
 				&philos[i]) != 0)
 			return (printf("Error: Thread creation failed\n"), 1);
-		pthread_detach(philos[i].thread);
+		//	pthread_detach(philos[i].thread);
+		i++;
+	}
+	i = 0;
+	while (i < data->num_philos)
+	{
+		pthread_join(philos[i].thread, NULL);
 		i++;
 	}
 	pthread_join(monitor_thread, NULL);

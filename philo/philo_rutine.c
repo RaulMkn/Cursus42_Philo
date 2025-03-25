@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 19:29:14 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/23 17:17:36 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/25 20:54:12 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,39 +37,51 @@ static void	philo_thinking(t_philo *philo, int *flag)
 
 static void	philo_eating(t_philo *philo)
 {
+	long	start;
+
 	if (!philo->right_fork || !philo->left_fork)
 		return ;
 	if (philo->id % 2 == 0)
 	{
 		pthread_mutex_lock(philo->right_fork);
+		pthread_mutex_lock(&philo->data->print_lock);
 		pthread_mutex_lock(&philo->data->over_lock);
 		if (philo->data->over == 0)
 			printf(FORK, (print_time(philo)), philo->id);
 		pthread_mutex_unlock(&philo->data->over_lock);
+		pthread_mutex_unlock(&philo->data->print_lock);
 		pthread_mutex_lock(philo->left_fork);
+		pthread_mutex_lock(&philo->data->print_lock);
 		pthread_mutex_lock(&philo->data->over_lock);
 		if (philo->data->over == 0)
 			printf(FORK, (print_time(philo)), philo->id);
 		pthread_mutex_unlock(&philo->data->over_lock);
+		pthread_mutex_unlock(&philo->data->print_lock);
 	}
 	else
 	{
 		pthread_mutex_lock(philo->left_fork);
+		pthread_mutex_lock(&philo->data->print_lock);
 		pthread_mutex_lock(&philo->data->over_lock);
 		if (philo->data->over == 0)
 			printf(FORK, (print_time(philo)), philo->id);
 		pthread_mutex_unlock(&philo->data->over_lock);
+		pthread_mutex_unlock(&philo->data->print_lock);
 		pthread_mutex_lock(philo->right_fork);
+		pthread_mutex_lock(&philo->data->print_lock);
 		pthread_mutex_lock(&philo->data->over_lock);
 		if (philo->data->over == 0)
 			printf(FORK, (print_time(philo)), philo->id);
 		pthread_mutex_unlock(&philo->data->over_lock);
+		pthread_mutex_unlock(&philo->data->print_lock);
 	}
 	pthread_mutex_lock(&philo->data->print_lock);
 	if (philo->data->over == 0)
 		printf(EAT, (print_time(philo)), philo->id);
 	pthread_mutex_unlock(&philo->data->print_lock);
-	usleep(1000 * philo->data->time_to_eat);
+	start = get_timestamp_ms();
+	while (get_timestamp_ms() - start < philo->data->time_to_eat)
+		usleep(500);
 	philo->last_meal_time = get_timestamp_ms();
 	philo->meals_eaten++;
 	pthread_mutex_lock(&philo->data->full_lock);
@@ -78,15 +90,16 @@ static void	philo_eating(t_philo *philo)
 		philo->full = 1;
 		philo->data->philo_full++;
 	}
-	pthread_mutex_unlock(&philo->data->full_lock);
-	pthread_mutex_lock(&philo->data->full_lock);
 	if (philo->data->philo_full == philo->data->num_philos)
 	{
 		pthread_mutex_lock(&philo->data->over_lock);
 		philo->data->over = 1;
 		pthread_mutex_unlock(&philo->data->over_lock);
+		return ;
 	}
 	pthread_mutex_unlock(&philo->data->full_lock);
+	pthread_mutex_unlock(philo->left_fork);
+	pthread_mutex_unlock(philo->right_fork);
 }
 
 static void	philo_sleeping(t_philo *philo)
@@ -155,19 +168,19 @@ void	*philo_routine(void *philos)
 		if (philo->data->over == 1)
 			return (pthread_mutex_unlock(&philo->data->over_lock), NULL);
 		pthread_mutex_unlock(&philo->data->over_lock);
-		philo_thinking(philo, &flag);
-		if (flag == 1)
-			break ;
-		pthread_mutex_lock(&philo->data->over_lock);
-		if (philo->data->over == 1)
-			return (pthread_mutex_unlock(&philo->data->over_lock), NULL);
-		pthread_mutex_unlock(&philo->data->over_lock);
 		philo_eating(philo);
 		pthread_mutex_lock(&philo->data->over_lock);
 		if (philo->data->over == 1)
 			return (pthread_mutex_unlock(&philo->data->over_lock), NULL);
 		pthread_mutex_unlock(&philo->data->over_lock);
 		philo_sleeping(philo);
+		pthread_mutex_lock(&philo->data->over_lock);
+		if (philo->data->over == 1)
+			return (pthread_mutex_unlock(&philo->data->over_lock), NULL);
+		pthread_mutex_unlock(&philo->data->over_lock);
+		philo_thinking(philo, &flag);
+		if (flag == 1)
+			break ;
 		if (check_death(philo))
 			break ;
 	}
