@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 19:27:42 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/25 21:24:13 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/25 21:35:26 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@ typedef struct s_data
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				must_eat_count;
-	long long		rutine_start;
 	int				over;
 	int				philo_full;
+	long long		rutine_start;
 	pthread_mutex_t	full_lock;
 	pthread_mutex_t	over_lock;
 	pthread_mutex_t	*forks;
@@ -46,11 +46,11 @@ typedef struct s_data
 typedef struct s_philo
 {
 	int				id;
-	pthread_t		thread;
-	long long		last_meal_time;
 	int				meals_eaten;
 	int				dead;
 	int				full;
+	long long		last_meal_time;
+	pthread_t		thread;
 	pthread_mutex_t	check_lock;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;

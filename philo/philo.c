@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:53:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/25 21:31:25 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/26 19:36:13 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,11 @@ int	validate_arguments(int argc, char *argv[], t_data *data)
 	data->time_to_eat = ft_atoi(argv[3]);
 	data->time_to_sleep = ft_atoi(argv[4]);
 	if (argv[5])
+	{
 		data->must_eat_count = ft_atoi(argv[5]);
+		if (data->must_eat_count <= 0)
+			return (printf("Invalid arguments"), 1);
+	}
 	else
 		data->must_eat_count = 2147483647;
 	data->rutine_start = get_timestamp_ms();
@@ -30,6 +34,9 @@ int	validate_arguments(int argc, char *argv[], t_data *data)
 	pthread_mutex_init(&data->over_lock, NULL);
 	if (data->num_philos <= 0)
 		return (printf("Error: Invalid number of philosophers\n"), 1);
+	else if (data->num_philos < 0 || data->time_to_die < 0
+		|| data->time_to_eat < 0 || data->time_to_sleep < 0)
+		return (printf("Invalid arguments"), 1);
 	return (0);
 }
 
