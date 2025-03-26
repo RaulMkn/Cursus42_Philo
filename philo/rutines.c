@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 21:15:08 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/25 21:28:37 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/26 19:54:18 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,18 @@ static void	philo_thinking(t_philo *philo, int *flag)
 {
 	pthread_mutex_lock(&philo->data->print_lock);
 	if (philo->data->over == 0)
-		printf(THINK, (get_timestamp_ms() - philo->data->rutine_start),
+		printf(THINK, print_time(philo),
 			philo->id);
 	pthread_mutex_unlock(&philo->data->print_lock);
 	if (philo->data->num_philos == 1)
 	{
 		pthread_mutex_lock(philo->left_fork);
 		if (philo->data->over == 0)
-			printf(FORK, (get_timestamp_ms() - philo->data->rutine_start),
+			printf(FORK, print_time(philo),
 				philo->id);
 		usleep(1000 * philo->data->time_to_die);
 		if (philo->data->over == 0)
-			printf(DEATH, (get_timestamp_ms() - philo->data->rutine_start),
+			printf(DEATH, print_time(philo),
 				philo->id);
 		pthread_mutex_unlock(philo->left_fork);
 		philo->dead = 1;

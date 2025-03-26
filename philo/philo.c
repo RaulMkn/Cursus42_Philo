@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:53:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/26 19:36:13 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/26 19:46:06 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	validate_arguments(int argc, char *argv[], t_data *data)
 	{
 		data->must_eat_count = ft_atoi(argv[5]);
 		if (data->must_eat_count <= 0)
-			return (printf("Invalid arguments"), 1);
+			return (printf("Invalid number of meals\n" ERROR));
 	}
 	else
 		data->must_eat_count = 2147483647;
@@ -33,10 +33,10 @@ int	validate_arguments(int argc, char *argv[], t_data *data)
 	data->philo_full = 0;
 	pthread_mutex_init(&data->over_lock, NULL);
 	if (data->num_philos <= 0)
-		return (printf("Error: Invalid number of philosophers\n"), 1);
+		return (printf("Error: Invalid number of philosophers\n" ERROR));
 	else if (data->num_philos < 0 || data->time_to_die < 0
 		|| data->time_to_eat < 0 || data->time_to_sleep < 0)
-		return (printf("Invalid arguments"), 1);
+		return (printf("Invalid arguments\n" ERROR));
 	return (0);
 }
 
@@ -46,7 +46,7 @@ static int	initialize_philosophers(t_data *data, t_philo **philos)
 
 	*philos = malloc(data->num_philos * sizeof(t_philo));
 	if (!(*philos))
-		return (printf("Error: Memory allocation failed\n"), 1);
+		return (printf("Error: Memory allocation failed\n"));
 	data->forks = malloc(data->num_philos * sizeof(pthread_mutex_t));
 	if (!data->forks)
 		return (printf("Error: Memory allocation failed\n"), free(*philos), 1);
@@ -75,16 +75,13 @@ static int	create_philosophers_threads(t_data *data, t_philo *philos)
 	pthread_t	monitor_thread;
 
 	if (pthread_create(&monitor_thread, NULL, monitor_routine, philos) != 0)
-	{
-		printf("Error: Monitor thread creation failed\n");
-		return (1);
-	}
+		return (printf("Error: Monitor thread creation failed\n"));
 	i = 0;
 	while (i < data->num_philos)
 	{
 		if (pthread_create(&philos[i].thread, NULL, philo_routine,
 				&philos[i]) != 0)
-			return (printf("Error: Thread creation failed\n"), 1);
+			return (printf("Error: Thread creation failed\n"));
 		i++;
 	}
 	i = 0;

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_rutine.c                                     :+:      :+:    :+:   */
+/*   rutine_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 19:29:14 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/25 21:22:59 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/03/26 19:52:22 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int	take_forks(t_philo *philo)
 
 void	philo_eats(t_philo *philo)
 {
-	long	start;
+	long long	start;
 
 	pthread_mutex_lock(&philo->data->print_lock);
 	if (philo->data->over == 0)
