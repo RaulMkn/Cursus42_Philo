@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 19:27:42 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/26 19:42:38 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/04/04 17:19:13 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,13 @@
 # define SLEEP "\033[35m%lld %d is sleeping\n\033[0m"
 # define ERROR "Usage example:\n./philo 7 300 200 200 5*\n*optional argument\n"
 
+typedef struct s_fork;
+{
+	int		id;
+	int		taken;
+};
+
+
 typedef struct s_data
 {
 	int				num_philos;
@@ -40,7 +47,6 @@ typedef struct s_data
 	pthread_mutex_t	full_lock;
 	pthread_mutex_t	over_lock;
 	pthread_mutex_t	*forks;
-	pthread_mutex_t	print_lock;
 
 }					t_data;
 
@@ -66,7 +72,7 @@ void				*monitor_routine(void *philos);
 long long			print_time(t_philo *philo);
 int					check_death(t_philo *philo);
 void				update_philo_state(t_philo *philo);
-int					check_if_over(t_data *data);
+int					check_if_over(t_philo *philo);
 int					take_forks(t_philo *philo);
 void				philo_eats(t_philo *philo);
 

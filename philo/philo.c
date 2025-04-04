@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:53:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/03/26 19:46:06 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/04/04 17:03:25 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	validate_arguments(int argc, char *argv[], t_data *data)
 	data->time_to_die = ft_atoi(argv[2]);
 	data->time_to_eat = ft_atoi(argv[3]);
 	data->time_to_sleep = ft_atoi(argv[4]);
-	if (argv[5])
+	if (argc == 6)
 	{
 		data->must_eat_count = ft_atoi(argv[5]);
 		if (data->must_eat_count <= 0)
@@ -50,7 +50,6 @@ static int	initialize_philosophers(t_data *data, t_philo **philos)
 	data->forks = malloc(data->num_philos * sizeof(pthread_mutex_t));
 	if (!data->forks)
 		return (printf("Error: Memory allocation failed\n"), free(*philos), 1);
-	pthread_mutex_init(&data->print_lock, NULL);
 	pthread_mutex_init(&data->full_lock, NULL);
 	i = 0;
 	while (i < data->num_philos)
@@ -105,7 +104,6 @@ static void	cleanup(t_data *data, t_philo *philos)
 		pthread_mutex_destroy(&philos[i].check_lock);
 		i++;
 	}
-	pthread_mutex_destroy(&data->print_lock);
 	pthread_mutex_destroy(&data->over_lock);
 	free(data->forks);
 	free(philos);
