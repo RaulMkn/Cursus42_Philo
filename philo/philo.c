@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 19:53:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/04/04 17:03:25 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/04/06 19:04:56 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,13 @@ static int	create_philosophers_threads(t_data *data, t_philo *philos)
 	int			i;
 	pthread_t	monitor_thread;
 
+	if (data->num_philos == 1)
+	{
+		printf(FORK, (print_time(philos)), philos->id);
+		usleep(data->time_to_die * 1000);
+		printf(DEATH, (print_time(philos)), philos->id);
+		return (0);
+	}
 	if (pthread_create(&monitor_thread, NULL, monitor_routine, philos) != 0)
 		return (printf("Error: Monitor thread creation failed\n"));
 	i = 0;
@@ -83,14 +90,10 @@ static int	create_philosophers_threads(t_data *data, t_philo *philos)
 			return (printf("Error: Thread creation failed\n"));
 		i++;
 	}
-	i = 0;
-	while (i < data->num_philos)
-	{
+	i = -1;
+	while (++i < data->num_philos)
 		pthread_join(philos[i].thread, NULL);
-		i++;
-	}
-	pthread_join(monitor_thread, NULL);
-	return (0);
+	return (pthread_join(monitor_thread, NULL), 0);
 }
 
 static void	cleanup(t_data *data, t_philo *philos)

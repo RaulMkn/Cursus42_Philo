@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 19:27:42 by rmakende          #+#    #+#             */
-/*   Updated: 2025/04/04 17:19:13 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/04/04 19:06:07 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,11 @@
 # define SLEEP "\033[35m%lld %d is sleeping\n\033[0m"
 # define ERROR "Usage example:\n./philo 7 300 200 200 5*\n*optional argument\n"
 
-typedef struct s_fork;
+typedef struct s_fork
 {
-	int		id;
-	int		taken;
-};
-
+	int				taken;
+	pthread_mutex_t	fork_lock;
+}					t_fork;
 
 typedef struct s_data
 {

@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 21:15:08 by rmakende          #+#    #+#             */
-/*   Updated: 2025/04/04 17:02:22 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/04/06 18:49:17 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,18 +22,6 @@ static void	philo_thinking(t_philo *philo)
 
 static int	philo_eating(t_philo *philo)
 {
-	if (philo->data->num_philos == 1)
-	{
-		pthread_mutex_lock(philo->left_fork);
-		if (philo->data->over == 0)
-			printf(FORK, print_time(philo), philo->id);
-		usleep(1000 * philo->data->time_to_die);
-		if (philo->data->over == 0)
-			printf(DEATH, print_time(philo), philo->id);
-		pthread_mutex_unlock(philo->left_fork);
-		philo->dead = 1;
-		return (0);
-	}
 	if (!philo->right_fork || !philo->left_fork)
 		return (1);
 	take_forks(philo);
