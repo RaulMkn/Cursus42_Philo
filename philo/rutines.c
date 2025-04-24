@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 21:15:08 by rmakende          #+#    #+#             */
-/*   Updated: 2025/04/06 18:49:17 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/04/22 18:20:04 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,19 +22,21 @@ static void	philo_thinking(t_philo *philo)
 
 static int	philo_eating(t_philo *philo)
 {
-	if (!philo->right_fork || !philo->left_fork)
+	if (!philo->r_fork_m || !philo->l_fork_m)
 		return (1);
-	take_forks(philo);
-	philo_eats(philo);
+	if (take_forks(philo))
+		return (1);
+	philo->last_meal_time = get_timestamp_ms();
+	if (philo_eats(philo))
+		return (1);
+	release_forks(philo);
 	update_philo_state(philo);
-	pthread_mutex_unlock(philo->left_fork);
-	pthread_mutex_unlock(philo->right_fork);
 	return (0);
 }
 
-static void	philo_sleeping(t_philo *philo)
+static int	philo_sleeping(t_philo *philo)
 {
-	long long	start_time;
+	long	start_time;
 
 	pthread_mutex_lock(&philo->data->over_lock);
 	if (philo->data->over == 0)
@@ -43,15 +45,11 @@ static void	philo_sleeping(t_philo *philo)
 	start_time = get_timestamp_ms();
 	while ((get_timestamp_ms() - start_time) < philo->data->time_to_sleep)
 	{
-		pthread_mutex_lock(&philo->data->over_lock);
-		if (philo->data->over == 1)
-		{
-			pthread_mutex_unlock(&philo->data->over_lock);
-			return ;
-		}
-		pthread_mutex_unlock(&philo->data->over_lock);
-		usleep(1000);
+		if (check_if_over(philo) || check_death(philo))
+			return (1);
+		usleep(50);
 	}
+	return (0);
 }
 
 void	*monitor_routine(void *philos)
@@ -88,22 +86,21 @@ void	*philo_routine(void *philos)
 	t_philo	*philo;
 
 	philo = (t_philo *)philos;
-	if (!philo || !philo->left_fork || !philo->right_fork)
+	if (!philo || !philo->l_fork_m || !philo->r_fork_m)
 		return (NULL);
 	philo->last_meal_time = philo->data->rutine_start;
 	while (1)
 	{
-		if (check_if_over(philo))
-			return (NULL);
 		if (philo_eating(philo))
-			return (NULL);
-		if (check_if_over(philo))
-			return (NULL);
-		philo_sleeping(philo);
-		if (check_if_over(philo))
-			return (NULL);
+			break ;
+		if (check_if_over(philo) || check_death(philo))
+			break ;
+		if (philo_sleeping(philo))
+			break ;
+		if (check_if_over(philo) || check_death(philo))
+			break ;
 		philo_thinking(philo);
-		if (check_death(philo))
+		if (check_if_over(philo) || check_death(philo))
 			break ;
 	}
 	return (NULL);

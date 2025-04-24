@@ -6,15 +6,15 @@
 #    By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/05 19:45:33 by rmakende          #+#    #+#              #
-#    Updated: 2025/04/06 19:10:03 by rmakende         ###   ########.fr        #
+#    Updated: 2025/04/22 13:16:11 by rmakende         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g3 -fsanitize=thread -g -pthread
+CC = cc
+CFLAGS = -Wall -Wextra -Werror -g3 -fsanitize=thread -pthread
 
-SRCS = philo.c utils.c rutine_utils.c rutines.c
+SRCS = philo.c utils.c rutine_utils.c rutines.c fork_management.c
 OBJS = $(SRCS:.c=.o)
 NAME = philo
 

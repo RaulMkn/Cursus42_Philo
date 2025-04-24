@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 19:29:14 by rmakende          #+#    #+#             */
-/*   Updated: 2025/04/04 17:02:56 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/04/22 14:01:54 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,26 +24,7 @@ int	check_if_over(t_philo *philo)
 	return (0);
 }
 
-int	take_forks(t_philo *philo)
-{
-	if (philo->id % 2 == 0)
-	{
-		pthread_mutex_lock(philo->right_fork);
-		pthread_mutex_lock(philo->left_fork);
-	}
-	else
-	{
-		pthread_mutex_lock(philo->left_fork);
-		pthread_mutex_lock(philo->right_fork);
-	}
-	pthread_mutex_lock(&philo->data->over_lock);
-	if (philo->data->over == 0)
-		printf(FORK, print_time(philo), philo->id);
-	pthread_mutex_unlock(&philo->data->over_lock);
-	return (0);
-}
-
-void	philo_eats(t_philo *philo)
+int	philo_eats(t_philo *philo)
 {
 	long long	start;
 
@@ -52,22 +33,17 @@ void	philo_eats(t_philo *philo)
 		printf(EAT, print_time(philo), philo->id);
 	pthread_mutex_unlock(&philo->data->over_lock);
 	start = get_timestamp_ms();
-	while ((get_timestamp_ms() - start) < philo->data->time_to_sleep)
+	while ((get_timestamp_ms() - start) < philo->data->time_to_eat)
 	{
-		pthread_mutex_lock(&philo->data->over_lock);
-		if (philo->data->over == 1)
-		{
-			pthread_mutex_unlock(&philo->data->over_lock);
-			return ;
-		}
-		pthread_mutex_unlock(&philo->data->over_lock);
-		usleep(1000);
+		if (check_if_over(philo) || check_death(philo))
+			return (1);
+		usleep(50);
 	}
+	return (0);
 }
 
 void	update_philo_state(t_philo *philo)
 {
-	philo->last_meal_time = get_timestamp_ms();
 	philo->meals_eaten++;
 	pthread_mutex_lock(&philo->data->full_lock);
 	if (philo->meals_eaten >= philo->data->must_eat_count && philo->full == 0)

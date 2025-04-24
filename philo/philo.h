@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 19:27:42 by rmakende          #+#    #+#             */
-/*   Updated: 2025/04/04 19:06:07 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/04/22 13:58:30 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ typedef struct s_data
 	long long		rutine_start;
 	pthread_mutex_t	full_lock;
 	pthread_mutex_t	over_lock;
-	pthread_mutex_t	*forks;
-
+	pthread_mutex_t	*forks_mutex;
+	int				*forks_arr;
 }					t_data;
 
 typedef struct s_philo
@@ -58,10 +58,11 @@ typedef struct s_philo
 	long long		last_meal_time;
 	pthread_t		thread;
 	pthread_mutex_t	check_lock;
-	pthread_mutex_t	*left_fork;
-	pthread_mutex_t	*right_fork;
+	pthread_mutex_t	*l_fork_m;
+	pthread_mutex_t	*r_fork_m;
+	int				*l_fork_b;
+	int				*r_fork_b;
 	t_data			*data;
-
 }					t_philo;
 
 int					ft_atoi(const char *str);
@@ -73,6 +74,7 @@ int					check_death(t_philo *philo);
 void				update_philo_state(t_philo *philo);
 int					check_if_over(t_philo *philo);
 int					take_forks(t_philo *philo);
-void				philo_eats(t_philo *philo);
+void				release_forks(t_philo *philo);
+int					philo_eats(t_philo *philo);
 
 #endif
