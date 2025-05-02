@@ -51,6 +51,5 @@ Este comando inicia una simulación con 5 filósofos, donde cada uno morirá si 
 
 ## 📚 Recursos y Referencias
 
-* [Descripción del proyecto Philosophers en 42](https://github.com/42Paris/42cursus/tree/master/philosophers)
-* [Problema de los filósofos comensales en Wikipedia](https://es.wikipedia.org/wiki/Problema_de_los_filos%C3%B3fos_comensales)
+* [Problema de los filósofos comensales en Wikipedia](https://es.wikipedia.org/wiki/Problema_de_la_cena_de_los_fil%C3%B3sofos)
 * [Documentación de pthreads](https://man7.org/linux/man-pages/man7/pthreads.7.html)
